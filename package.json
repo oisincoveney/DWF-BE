@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix"
+    "pretest": "./node_modules/.bin/eslint --ignore-path .gitignore . --fix",
+    "asdf": "console.log(\"hello\")"
   },
   "husky": {
     "hooks": {
