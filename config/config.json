@@ -1,0 +1,27 @@
+{
+  "development": {
+    "username": "oisin",
+    "password": "oisin",
+    "database": "dev",
+    "host": "localhost",
+    "dialect": "postgres",
+    "port": 8080,
+    "operatorsAliases": false
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "localhost",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  }
+}

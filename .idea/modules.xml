@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../DWF-DB/.idea/DWF-DB.iml" filepath="$PROJECT_DIR$/../DWF-DB/.idea/DWF-DB.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/dwf-be.iml" filepath="$PROJECT_DIR$/.idea/dwf-be.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../DWF-FE/.idea/dwf-fe.iml" filepath="$PROJECT_DIR$/../DWF-FE/.idea/dwf-fe.iml" />
     </modules>
   </component>
 </project>
