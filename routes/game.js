@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require('uuid')
 const cardHandler = require('../helpers/card-handler')
+const gameHandler = require('../helpers/game-handler')
 const express = require('express')
 const router = express.Router()
 const models = require('../models/index')
@@ -13,40 +14,8 @@ const routeName = '/game'
 
 /* Create game */
 router.post('/create', async (req, res, next) => {
-  const g = await Game.create({
-    id: uuidv4(),
-    cardOrder: cardHandler.randomDeck(52),
-    nextCard: 0,
-    game_start_time: new Date(),
-    status: 'waiting',
-    createdAt: new Date(),
-    updatedAt: new Date()
-  })
-
-  const u = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: (req.body.password) ? req.body.password : null,
-    games_played: 0,
-    total_score: 0,
-    favorite_drink: req.body.favorite_drink,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  })
-
-  const gu = await GameUsers.create({
-    GameId: g.id,
-    UserId: u.id,
-    status: 'disconnected',
-    joinedAt: new Date(),
-    gameOwner: true,
-    score: 0,
-    order: 0,
-    updatedAt: new Date(),
-    createdAt: new Date()
-  })
-
-  res.send({ g, gu })
+  let data = await gameHandler.newGame(req)
+  res.send(data)
 })
 
 /* main game */
@@ -101,16 +70,40 @@ router.get('/:GameId/', function (req, res, next) {
       })
     })
     socket.on('ready_for_next', async (user) => {
-      // return number of users (or users that are still unconfirmed
-      await GameUsers.update({
-        status: 'ready'
-      }, {
+      // return number of users (or users) that are still unconfirmed
+      const gu = await GameUsers.findAll({
+        attributes: ['id', 'UserId', 'status'],
         where: {
-          UserId: user.id
+          GameId: req.params.GameId
         }
       })
+      let count = 0
+      for (const g of gu) {
+        if (g.UserId === user.id) {
+          g.status = 'ready'
+          g.save()
+        } else if (g.status !== 'ready') {
+          count += 1
+        }
+      }
+      if (count !== gu.length) {
+        socket.emit('waiting_for_players', {
+          usersLeft: count
+        })
+      } else {
+        socket.emit('done_waiting', {
+          game: g
+        })
+      }
     })
-    socket.on('next_card', () => {})
+    socket.on('next_card', () => {
+      const g = await Game.findByPk(req.params.GameId)
+      g.nextCard++
+      g.save()
+      socket.emit('next_card', {
+        game: g
+      })
+    })
     socket.on('game_ended', () => {})
     socket.on('disconnect', () => {})
   })
