@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: DataTypes.ENUM('connected', 'ready', 'waiting', 'playing', 'victim', 'disconnected'),
     joinedAt: DataTypes.DATE,
+    gameOwner: DataTypes.BOOLEAN,
     score: DataTypes.INTEGER,
     order: DataTypes.INTEGER
   }, {})

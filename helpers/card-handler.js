@@ -40,13 +40,22 @@ const randomDeck = (numCards = deckLength) => {
   return deck
 }
 
+const getNumFromSuitCard = (cardnum) => {
+  if (cardnum === 'A') { return 1 }
+  if (cardnum === 'K') { return 13 }
+  if (cardnum === 'Q') { return 12 }
+  if (cardnum === 'J') { return 11 }
+  return parseInt(cardnum)
+}
+
 const getNext = (num, deck) => {
   return num !== deck.length() ? num + 1 : -1
 }
 
 module.exports = {
   randomDeck,
-  getNext
+  getNext,
+  getNumFromSuitCard
 }
 
 console.log(randomDeck(52))

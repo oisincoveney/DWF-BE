@@ -21,6 +21,9 @@ module.exports = {
       joinedAt: {
         type: Sequelize.DATE
       },
+      gameOwner: {
+        type: Sequelize.BOOLEAN
+      },
       score: {
         type: Sequelize.INTEGER
       },

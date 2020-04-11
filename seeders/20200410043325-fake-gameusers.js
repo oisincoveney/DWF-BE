@@ -34,6 +34,7 @@ module.exports = {
           UserId: u.id,
           status: enums[Math.round(Math.random() * 6)],
           joinedAt: new Date(),
+          gameOwner: i === 0,
           score: faker.random.number(),
           order: ++i,
           updatedAt: new Date(),
