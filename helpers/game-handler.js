@@ -1,77 +1,49 @@
-const cardHandler = require('../helpers/card-handler')
-const { v4: uuidv4 } = require('uuid')
-const models = require('../models/index')
-const Game = models.Game
-const Rule = models.Rule
-const User = models.User
-const GameUsers = models.GameUsers
+/* eslint-disable no-unused-vars */
+import * as cardHandler from './card-handler'
 
-async function newGame (req) {
-  const g = await Game.create({
+const models = require('../models/index')
+const { Game, User, GameUsers, Rule, GameRules, RuleSet } = models
+const { v4: uuidv4 } = require('uuid')
+
+/* Create a new game */
+async function createGame () {
+  return await Game.create({
     id: uuidv4(),
     cardOrder: cardHandler.randomDeck(52),
-    nextCard: -1,
+    nextCard: 0,
     game_start_time: new Date(),
-    status: 'waiting',
+    status: 'created',
     createdAt: new Date(),
     updatedAt: new Date()
   })
+}
 
-  const u = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    password: (req.body.password) ? req.body.password : null,
-    games_played: 0,
-    total_score: 0,
-    favorite_drink: req.body.favorite_drink,
-    createdAt: new Date(),
-    updatedAt: new Date()
-  })
+async function changeStatus (game, user, status) {
+  return await GameUsers.update({ status }, { where: { UserId: user.id, GameId: game.id } })
+  // tell other users that the user has confirmed
+}
 
-  const gu = await GameUsers.create({
-    GameId: g.id,
-    UserId: u.id,
-    status: 'disconnected',
-    joinedAt: new Date(),
-    gameOwner: true,
-    score: 0,
-    order: 0,
-    updatedAt: new Date(),
-    createdAt: new Date()
-  })
-  return { game: g, users: u, gameusers: gu }
+/* Wait for users to join the game */
+async function numUsersWithStatus (status) {
+  return GameUsers.findAll()
 }
-function startGame (GameId) {
-  const g = Game.findByPk(GameId)
-  g.status = 'started'
-  g.save()
-  nextCard(GameId, g)
-}
-function addUser (GameId, userData) {
-  // add user to GameUsers and to Users list
-}
-// pause the game until all of the players have the status in the param
-function waitForPlayerStatus (GameId, UserId, status) {}
 
-function nextCard (GameId, gamedata = undefined) {
-  let g
-  if (!gamedata) { g = Game.findByPk(GameId) } else { g = gamedata }
-  // get the next card
-  g.nextCard += 1
-  g.save()
-  return cardHandler.getNumFromSuitCard(cardHandler.getNext(g.nextCard, g.cardOrder)[0])
-}
-function playMiniGame (GameId, RuleSetId, card) {
-  // probably want some minigame lookup table if I want to program some games
-}
-function endGame (GameId) {}
+/* Start the game */
+async function startGame () {}
 
-module.exports = {
-  newGame,
-  startGame,
-  addUser,
-  waitForPlayerStatus,
-  nextCard,
-  playMiniGame,
-  endGame
-}
+/* Take a turn:
+ *   0) Wait for users to confirm the next game
+ *   1) Identify the user with the current turn
+ *   2) Draw the card
+ *   3) Find the rule for the card
+ *   4) Act on the rule
+ *   5) End the turn */
+async function takeTurn () {}
+
+/* End the game */
+async function endGame () {}
+
+/* Delete the game */
+async function deleteGame () {}
+
+module.exports = {}
